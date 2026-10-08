@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haftalık Ekipmansız Kol Antrenmanı</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --accent-biceps: #38bdf8;
+      --accent-triceps: #f43f5e;
+      --text-color: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-color); padding: 20px; display: flex; justify-content: center; }
+    .container { max-width: 800px; width: 100%; }
+
+    header { text-align: center; margin-bottom: 30px; }
+    header h1 { font-size: 2rem; background: linear-gradient(90deg, #38bdf8, #f43f5e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    header p { color: var(--text-muted); font-size: 0.95rem; margin-top: 5px; }
+
+    .schedule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-bottom: 30px; }
+    .day-card { background: var(--card-bg); padding: 15px; border-radius: 12px; border-left: 4px solid var(--text-muted); }
+    .day-card.active { border-left-color: var(--accent-biceps); }
+    .day-card h3 { font-size: 1.1rem; margin-bottom: 5px; }
+    .day-card p { font-size: 0.85rem; color: var(--text-muted); }
+
+    .workout-section { background: var(--card-bg); padding: 20px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); }
+    .exercise-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 15px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+    .exercise-info h4 { font-size: 1rem; color: var(--text-color); }
+    .exercise-info span { font-size: 0.8rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; margin-top: 4px; display: inline-block; }
+    .tag-triceps { background: rgba(244,63,94,0.2); color: var(--accent-triceps); }
+    .tag-biceps { background: rgba(56,189,248,0.2); color: var(--accent-biceps); }
+    
+    .btn-done { background: #334155; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+    .btn-done.completed { background: var(--success); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>💪 Ekipmansız Kol Antrenmanı</h1>
+      <p>Haftalık Rutin & Hareket Rehberi</p>
+    </header>
+
+    <div class="schedule-grid">
+      <div class="day-card active">
+        <h3>Pazartesi</h3>
+        <p>Kol Antrenmanı (3 Set)</p>
+      </div>
+      <div class="day-card">
+        <h3>Salı</h3>
+        <p>Dinlenme / Esneme</p>
+      </div>
+      <div class="day-card active">
+        <h3>Çarşamba</h3>
+        <p>Kol Antrenmanı (3 Set)</p>
+      </div>
+      <div class="day-card">
+        <h3>Perşembe</h3>
+        <p>Dinlenme</p>
+      </div>
+      <div class="day-card active">
+        <h3>Cuma</h3>
+        <p>Kol Antrenmanı (3 Set)</p>
+      </div>
+      <div class="day-card">
+        <h3>Hafta Sonu</h3>
+        <p>Tam Dinlenme</p>
+      </div>
+    </div>
+
+    <div class="workout-section">
+      <h2 style="margin-bottom: 15px; font-size: 1.2rem;">Günlük Egzersiz Listesi</h2>
+
+      <div class="exercise-card">
+        <div class="exercise-info">
+          <h4>1. Elmas (Diamond) Şınav</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">3 Set × 8-12 Tekrar</p>
+          <span class="tag-triceps">Arka Kol</span>
+        </div>
+        <button class="btn-done" onclick="toggleDone(this)">Tamamla</button>
+      </div>
+
+      <div class="exercise-card">
+        <div class="exercise-info">
+          <h4>2. Masa Altı Çekiş (Table Row)</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">3 Set × 10-12 Tekrar</p>
+          <span class="tag-biceps">Ön Kol</span>
+        </div>
+        <button class="btn-done" onclick="toggleDone(this)">Tamamla</button>
+      </div>
+
+      <div class="exercise-card">
+        <div class="exercise-info">
+          <h4>3. Sandalye Dips</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">3 Set × 12-15 Tekrar</p>
+          <span class="tag-triceps">Arka Kol</span>
+        </div>
+        <button class="btn-done" onclick="toggleDone(this)">Tamamla</button>
+      </div>
+
+      <div class="exercise-card">
+        <div class="exercise-info">
+          <h4>4. Kapı Kasası Çekişi</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">3 Set × 12-15 Tekrar</p>
+          <span class="tag-biceps">Ön Kol</span>
+        </div>
+        <button class="btn-done" onclick="toggleDone(this)">Tamamla</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleDone(btn) {
+      btn.classList.toggle('completed');
+      if (btn.classList.contains('completed')) {
+        btn.textContent = '✓ Bitti';
+      } else {
+        btn.textContent = 'Tamamla';
+      }
+    }
+  </script>
+</body>
+</html>
