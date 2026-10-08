@@ -3,129 +3,289 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Haftalık Ekipmansız Kol Antrenmanı</title>
+  <title>Interaktif Kol Antrenmanı Planı</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-color: #0f172a;
       --card-bg: #1e293b;
-      --accent-biceps: #38bdf8;
-      --accent-triceps: #f43f5e;
-      --text-color: #f8fafc;
+      --accent-blue: #38bdf8;
+      --accent-rose: #f43f5e;
+      --accent-green: #10b981;
+      --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --success: #10b981;
+      --border-color: rgba(255, 255, 255, 0.08);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-color); padding: 20px; display: flex; justify-content: center; }
+    body { background-color: var(--bg-color); color: var(--text-main); padding: 20px; display: flex; justify-content: center; }
     .container { max-width: 800px; width: 100%; }
 
-    header { text-align: center; margin-bottom: 30px; }
-    header h1 { font-size: 2rem; background: linear-gradient(90deg, #38bdf8, #f43f5e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    header p { color: var(--text-muted); font-size: 0.95rem; margin-top: 5px; }
+    header { text-align: center; margin-bottom: 25px; }
+    header h1 { font-size: 2rem; background: linear-gradient(90deg, var(--accent-blue), var(--accent-rose)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    header p { color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; }
 
-    .schedule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-bottom: 30px; }
-    .day-card { background: var(--card-bg); padding: 15px; border-radius: 12px; border-left: 4px solid var(--text-muted); }
-    .day-card.active { border-left-color: var(--accent-biceps); }
-    .day-card h3 { font-size: 1.1rem; margin-bottom: 5px; }
-    .day-card p { font-size: 0.85rem; color: var(--text-muted); }
+    /* İlerleme Çubuğu */
+    .progress-box { background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color); }
+    .progress-header { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; color: var(--text-muted); }
+    .progress-bar-bg { background: #334155; height: 10px; border-radius: 5px; overflow: hidden; }
+    .progress-bar-fill { background: linear-gradient(90deg, var(--accent-blue), var(--accent-green)); height: 100%; width: 0%; transition: width 0.3s ease; }
 
-    .workout-section { background: var(--card-bg); padding: 20px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); }
-    .exercise-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 15px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-    .exercise-info h4 { font-size: 1rem; color: var(--text-color); }
-    .exercise-info span { font-size: 0.8rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; margin-top: 4px; display: inline-block; }
-    .tag-triceps { background: rgba(244,63,94,0.2); color: var(--accent-triceps); }
-    .tag-biceps { background: rgba(56,189,248,0.2); color: var(--accent-biceps); }
-    
-    .btn-done { background: #334155; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-    .btn-done.completed { background: var(--success); }
+    /* Gün Seçici Menü */
+    .days-nav { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 25px; scrollbar-width: none; }
+    .days-nav::-webkit-scrollbar { display: none; }
+    .day-btn { flex: 1; min-width: 90px; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-muted); padding: 12px 8px; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.2s; }
+    .day-btn:hover { background: #334155; }
+    .day-btn.active { background: var(--accent-blue); color: #0f172a; font-weight: 700; border-color: var(--accent-blue); box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3); }
+
+    /* Günlük İçerik Alanı */
+    .day-content { display: none; background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid var(--border-color); }
+    .day-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-title { font-size: 1.2rem; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
+    .section-title span { font-size: 0.8rem; background: rgba(56, 189, 248, 0.15); color: var(--accent-blue); padding: 4px 10px; border-radius: 20px; }
+
+    /* Kartlar */
+    .exercise-card { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); padding: 16px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .exercise-info h4 { font-size: 1rem; color: var(--text-main); margin-bottom: 4px; }
+    .exercise-info p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; }
+    .exercise-info .tag { font-size: 0.75rem; padding: 2px 8px; border-radius: 4px; font-weight: 600; display: inline-block; }
+    .tag-triceps { background: rgba(244, 63, 94, 0.2); color: var(--accent-rose); }
+    .tag-biceps { background: rgba(56, 189, 248, 0.2); color: var(--accent-blue); }
+
+    .btn-complete { background: #334155; color: var(--text-main); border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 0.85rem; font-weight: 600; }
+    .btn-complete.done { background: var(--accent-green); color: #000; }
+
+    .rest-box { text-align: center; padding: 30px 15px; }
+    .rest-box h3 { font-size: 1.3rem; color: var(--accent-blue); margin-bottom: 10px; }
+    .rest-box p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
   </style>
 </head>
 <body>
 
   <div class="container">
     <header>
-      <h1>💪 Ekipmansız Kol Antrenmanı</h1>
-      <p>Haftalık Rutin & Hareket Rehberi</p>
+      <h1>💪 Kol Antrenmanı & Rutin</h1>
+      <p>Gününü seç, egzersizlerini tamamla ve ilerlemeni takip et.</p>
     </header>
 
-    <div class="schedule-grid">
-      <div class="day-card active">
-        <h3>Pazartesi</h3>
-        <p>Kol Antrenmanı (3 Set)</p>
+    <!-- Günlük İlerleme Çubuğu -->
+    <div class="progress-box">
+      <div class="progress-header">
+        <span>Günün Tamamlanma Oranı</span>
+        <span id="progress-percent">0%</span>
       </div>
-      <div class="day-card">
-        <h3>Salı</h3>
-        <p>Dinlenme / Esneme</p>
-      </div>
-      <div class="day-card active">
-        <h3>Çarşamba</h3>
-        <p>Kol Antrenmanı (3 Set)</p>
-      </div>
-      <div class="day-card">
-        <h3>Perşembe</h3>
-        <p>Dinlenme</p>
-      </div>
-      <div class="day-card active">
-        <h3>Cuma</h3>
-        <p>Kol Antrenmanı (3 Set)</p>
-      </div>
-      <div class="day-card">
-        <h3>Hafta Sonu</h3>
-        <p>Tam Dinlenme</p>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill"></div>
       </div>
     </div>
 
-    <div class="workout-section">
-      <h2 style="margin-bottom: 15px; font-size: 1.2rem;">Günlük Egzersiz Listesi</h2>
+    <!-- Gün Seçim Butonları -->
+    <div class="days-nav">
+      <button class="day-btn active" onclick="switchDay('pazartesi', this)">Pazartesi</button>
+      <button class="day-btn" onclick="switchDay('sali', this)">Salı</button>
+      <button class="day-btn" onclick="switchDay('carsamba', this)">Çarşamba</button>
+      <button class="day-btn" onclick="switchDay('persembe', this)">Perşembe</button>
+      <button class="day-btn" onclick="switchDay('cuma', this)">Cuma</button>
+      <button class="day-btn" onclick="switchDay('haftasonu', this)">Hafta Sonu</button>
+    </div>
+
+    <!-- PAZARTESİ -->
+    <div id="pazartesi" class="day-content active">
+      <div class="section-title">
+        Pazartesi: Yoğun Kol Günü <span>3 Set / Hareket</span>
+      </div>
 
       <div class="exercise-card">
         <div class="exercise-info">
           <h4>1. Elmas (Diamond) Şınav</h4>
-          <p style="font-size: 0.85rem; color: var(--text-muted);">3 Set × 8-12 Tekrar</p>
-          <span class="tag-triceps">Arka Kol</span>
+          <p>3 Set × 8-12 Tekrar (İndirirken 3 saniye yavaş indir)</p>
+          <span class="tag tag-triceps">Arka Kol</span>
         </div>
-        <button class="btn-done" onclick="toggleDone(this)">Tamamla</button>
+        <button class="btn-complete" onclick="toggleTask(this)">Tamamla</button>
       </div>
 
       <div class="exercise-card">
         <div class="exercise-info">
           <h4>2. Masa Altı Çekiş (Table Row)</h4>
-          <p style="font-size: 0.85rem; color: var(--text-muted);">3 Set × 10-12 Tekrar</p>
-          <span class="tag-biceps">Ön Kol</span>
+          <p>3 Set × 10-12 Tekrar (Yukarıda 1 saniye bekle)</p>
+          <span class="tag tag-biceps">Ön Kol</span>
         </div>
-        <button class="btn-done" onclick="toggleDone(this)">Tamamla</button>
+        <button class="btn-complete" onclick="toggleTask(this)">Tamamla</button>
       </div>
 
       <div class="exercise-card">
         <div class="exercise-info">
           <h4>3. Sandalye Dips</h4>
-          <p style="font-size: 0.85rem; color: var(--text-muted);">3 Set × 12-15 Tekrar</p>
-          <span class="tag-triceps">Arka Kol</span>
+          <p>3 Set × 12-15 Tekrar (Sırtını sandalyeye yakın tut)</p>
+          <span class="tag tag-triceps">Arka Kol</span>
         </div>
-        <button class="btn-done" onclick="toggleDone(this)">Tamamla</button>
+        <button class="btn-complete" onclick="toggleTask(this)">Tamamla</button>
       </div>
 
       <div class="exercise-card">
         <div class="exercise-info">
           <h4>4. Kapı Kasası Çekişi</h4>
-          <p style="font-size: 0.85rem; color: var(--text-muted);">3 Set × 12-15 Tekrar</p>
-          <span class="tag-biceps">Ön Kol</span>
+          <p>3 Set × 12-15 Tekrar (Kası tepe noktada sık)</p>
+          <span class="tag tag-biceps">Ön Kol</span>
         </div>
-        <button class="btn-done" onclick="toggleDone(this)">Tamamla</button>
+        <button class="btn-complete" onclick="toggleTask(this)">Tamamla</button>
       </div>
     </div>
+
+    <!-- SALI -->
+    <div id="sali" class="day-content">
+      <div class="rest-box">
+        <h3>🧘‍♂️ Dinlenme ve Onarım Günü</h3>
+        <p>Bugün kasların büyümesi ve iyileşmesi için dinlenme günü. Hafif esneme hareketleri yapabilir veya bol su içip proteinli beslenmeye odaklanabilirsin.</p>
+      </div>
+    </div>
+
+    <!-- ÇARŞAMBA -->
+    <div id="carsamba" class="day-content">
+      <div class="section-title">
+        Çarşamba: Yoğun Kol Günü <span>3 Set / Hareket</span>
+      </div>
+
+      <div class="exercise-card">
+        <div class="exercise-info">
+          <h4>1. Sandalye Dips</h4>
+          <p>3 Set × 12-15 Tekrar (Derine in ama omzunu zorlama)</p>
+          <span class="tag tag-triceps">Arka Kol</span>
+        </div>
+        <button class="btn-complete" onclick="toggleTask(this)">Tamamla</button>
+      </div>
+
+      <div class="exercise-card">
+        <div class="exercise-info">
+          <h4>2. Masa Altı Çekiş (Table Row)</h4>
+          <p>3 Set × 10-12 Tekrar (Avuç içleri sana baksın)</p>
+          <span class="tag tag-biceps">Ön Kol</span>
+        </div>
+        <button class="btn-complete" onclick="toggleTask(this)">Tamamla</button>
+      </div>
+
+      <div class="exercise-card">
+        <div class="exercise-info">
+          <h4>3. Elmas (Diamond) Şınav</h4>
+          <p>3 Set × 8-12 Tekrar (Diz üstü de yapabilirsin)</p>
+          <span class="tag tag-triceps">Arka Kol</span>
+        </div>
+        <button class="btn-complete" onclick="toggleTask(this)">Tamamla</button>
+      </div>
+
+      <div class="exercise-card">
+        <div class="exercise-info">
+          <h4>4. Kapı Kasası Çekişi</h4>
+          <p>3 Set × 12-15 Tekrar</p>
+          <span class="tag tag-biceps">Ön Kol</span>
+        </div>
+        <button class="btn-complete" onclick="toggleTask(this)">Tamamla</button>
+      </div>
+    </div>
+
+    <!-- PERŞEMBE -->
+    <div id="persembe" class="day-content">
+      <div class="rest-box">
+        <h3>🌱 Aktif Dinlenme</h3>
+        <p>Kolların bugün dinleniyor. Yürüyüş yapabilir, bol su içerek kaslarda biriken laktik asidin atılmasına yardımcı olabilirsin.</p>
+      </div>
+    </div>
+
+    <!-- CUMA -->
+    <div id="cuma" class="day-content">
+      <div class="section-title">
+        Cuma: Hafta Sonu Öncesi Kol Günü <span>3 Set / Hareket</span>
+      </div>
+
+      <div class="exercise-card">
+        <div class="exercise-info">
+          <h4>1. Elmas (Diamond) Şınav</h4>
+          <p>3 Set × 8-12 Tekrar</p>
+          <span class="tag tag-triceps">Arka Kol</span>
+        </div>
+        <button class="btn-complete" onclick="toggleTask(this)">Tamamla</button>
+      </div>
+
+      <div class="exercise-card">
+        <div class="exercise-info">
+          <h4>2. Masa Altı Çekiş (Table Row)</h4>
+          <p>3 Set × 10-12 Tekrar</p>
+          <span class="tag tag-biceps">Ön Kol</span>
+        </div>
+        <button class="btn-complete" onclick="toggleTask(this)">Tamamla</button>
+      </div>
+
+      <div class="exercise-card">
+        <div class="exercise-info">
+          <h4>3. Sandalye Dips</h4>
+          <p>3 Set × 12-15 Tekrar</p>
+          <span class="tag tag-triceps">Arka Kol</span>
+        </div>
+        <button class="btn-complete" onclick="toggleTask(this)">Tamamla</button>
+      </div>
+
+      <div class="exercise-card">
+        <div class="exercise-info">
+          <h4>4. Kapı Kasası Çekişi</h4>
+          <p>3 Set × 12-15 Tekrar</p>
+          <span class="tag tag-biceps">Ön Kol</span>
+        </div>
+        <button class="btn-complete" onclick="toggleTask(this)">Tamamla</button>
+      </div>
+    </div>
+
+    <!-- HAFTA SONU -->
+    <div id="haftasonu" class="day-content">
+      <div class="rest-box">
+        <h3>😴 Tam Dinlenme ve Gece Onarımı</h3>
+        <p>Haftalık antrenman periyodunu tamamladın! İyi uyku alarak ve kaliteli protein tüketerek kaslarının büyümesini sağla.</p>
+      </div>
+    </div>
+
   </div>
 
   <script>
-    function toggleDone(btn) {
-      btn.classList.toggle('completed');
-      if (btn.classList.contains('completed')) {
-        btn.textContent = '✓ Bitti';
-      } else {
-        btn.textContent = 'Tamamla';
-      }
+    function switchDay(dayId, btn) {
+      document.querySelectorAll('.day-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.day-btn').forEach(el => el.classList.remove('active'));
+
+      document.getElementById(dayId).classList.add('active');
+      btn.classList.add('active');
+
+      updateProgress();
     }
+
+    function toggleTask(btn) {
+      btn.classList.toggle('done');
+      btn.textContent = btn.classList.contains('done') ? '✓ Bitti' : 'Tamamla';
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const activeContent = document.querySelector('.day-content.active');
+      const buttons = activeContent.querySelectorAll('.btn-complete');
+      
+      if (buttons.length === 0) {
+        document.getElementById('progress-fill').style.width = '100%';
+        document.getElementById('progress-percent').textContent = 'Dinlenme Günü';
+        return;
+      }
+
+      const completed = activeContent.querySelectorAll('.btn-complete.done').length;
+      const percent = Math.round((completed / buttons.length) * 100);
+
+      document.getElementById('progress-fill').style.width = percent + '%';
+      document.getElementById('progress-percent').textContent = percent + '%';
+    }
+
+    // İlk açılışta ilerlemeyi güncelle
+    updateProgress();
   </script>
 </body>
 </html>
